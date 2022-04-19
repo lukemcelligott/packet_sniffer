@@ -11,8 +11,11 @@ Must run in Linux environment to use raw socket
 import socket
 import sys
 
-# create INET Raw socket. Parameter: (Family:INET, Type:RAW, Protocol:TCP)
-s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+try:
+    # create INET Raw socket. Parameter: (Family:INET, Type:RAW, Protocol:TCP)
+    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+except Exception as E:
+    print("Error occurred when creating the socket: 5", str(E))
 
 # use infinite loop to gather data from socket
 while True:
