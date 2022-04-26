@@ -14,8 +14,9 @@ import struct
 
 # function to parse the Ethernet Header. Returns destination MAC, source MAC, protocol, and data.
 def ethernet_head(raw_data):
-    # use .unpack to get 6 byte structures
+    # use .unpack to get 6 byte + 6 byte + 2 byte
     destination, source, prototype = struct.unpack('! 6s 6s H', raw_data[:14])  # format gathered is MAC, MAC, 2char
+    # use hex() to decode with delimiter of ':'
     dest_mac = destination.hex(":")
     src_mac = source.hex(":")
     proto = socket.htons(prototype)  # get protocol
@@ -25,19 +26,30 @@ def ethernet_head(raw_data):
 
 # function to parse the IP headers
 def ipv4_head(raw_data):
-    version_header_length = raw_data[0]
-    version = version_header_length >> 4
-    header_length = (version_header_length & 15) * 4
+    # use .unpack() to get [8 padding, int(1), int(1), 2 padding, char[4], char[4]]
     ttl, proto, src, target = struct.unpack('! 8x B B 2x 4s 4s', raw_data[:20])
-    data = raw_data[header_length:]
-    def get_ip(addr):
-        return '.'.join(map(str, addr))
+
+    # use function to get ip of extracted src and target data
+    def get_ip(address):
+        return '.'.join(map(str, address))
     src = get_ip(src)
     target = get_ip(target)
-    return version, header_length, ttl, proto, src, target, data
+
+    return proto, src, target
 
 
 # main
+print("PACKET SNIFFER")
+valid_menu = False
+while not valid_menu:
+    user_select = input("Options: \n1. Receive all packets\n2. Filter by source IP\n"
+                        "3. Filter by destination IP\n4. Filter by source and destination IP's\n")
+    if int(user_select) in (1, 2, 3, 4):
+        valid_menu = True
+
+user_source_ip = input("Enter source IP: ")
+user_destination_ip = input("Enter destination IP: ")
+
 try:
     # create INET Raw socket. Parameter: (Family:AF_Packet, Type:RAW, Protocol:ntohs)
     s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
@@ -45,21 +57,29 @@ try:
 except Exception as E:
     print("Error occurred when creating the socket: ", str(E))
 
-# use infinite loop to gather data from socket
-print("PACKET SNIFFER")
-print("Options: \n1. Receive all packets\n2. Filter by source IP\n"
-      "3. Filter by destination IP\n4. Filter by source and Destination IP's")
-user_source_ip = input("Enter source IP: ")
-user_destination_ip = input("Enter destination IP: ")
 print("sniffing packets...")
+# use infinite loop to gather data from socket
 while True:
     raw_data, addr = s.recvfrom(65535)  # place data into string - raw_data
     eth = ethernet_head(raw_data)  # Use ethernet_head function to parse the ethernet header of the data
-    if eth[2] == 8:
-        ipv4 = ipv4_head(eth[3])
-        if ipv4[4] == user_source_ip and ipv4[5] == user_destination_ip: # match for test environment ip and facebook ip
+
+    # after receiving eth[] array, assign variables
+    eth_dest = eth[0]
+    eth_source = eth[1]
+    eth_proto = eth[2]
+    remaining_raw_data = eth[3]
+
+    # if protocol is 8 (ipv4), process packet
+    if eth_proto == 8:
+        # use ipv4_head to parse remaining data and assign to corresponding variables
+        ipv4 = ipv4_head(remaining_raw_data)
+        ipv4_proto = ipv4[0]
+        ipv4_source = ipv4[1]
+        ipv4_dest = ipv4[2]
+
+        # match for user input (src and dest)
+        if ipv4[4] == user_source_ip and ipv4[5] == user_destination_ip:
             print('\nEthernet Frame:')
-            print('Destination: {}, Source: {}, Protocol: {}'.format(eth[0], eth[1], eth[2]))
+            print('Destination: {}, Source: {}, Protocol: {}'.format(eth_dest, eth_source, eth_proto))
             print('\t - ' + 'IPv4 Packet:')
-            print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
-            print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[3], ipv4[4], ipv4[5]))
+            print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4_proto, ipv4_source, ipv4_dest))
