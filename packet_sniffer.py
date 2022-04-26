@@ -66,7 +66,6 @@ except Exception as E:
 
 # use infinite loop to gather data from socket
 while True:
-    print(s.recvfrom(65565))  # print receiving data
     raw_data, addr = s.recvfrom(65535)  # place data into string - raw_data
     eth = ethernet_head(raw_data)  # Use ethernet_head function to parse the ethernet header of the data
 
