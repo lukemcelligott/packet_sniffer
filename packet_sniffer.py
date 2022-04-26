@@ -21,11 +21,21 @@ import sys
 def ethernet_head(raw_data):
     # use .unpack to get 6 byte structures
     destination, source, prototype = struct.unpack('! 6s 6s H', raw_data[:14])  # format gathered is MAC, MAC, 2char
-    dest_mac = get_mac_addr(destination)
-    src_mac = get_mac_addr(source)
+    dest_mac = destination.hex(":")
+    src_mac = source.hex(":")
     proto = socket.htons(prototype)  # get protocol
     data = raw_data[14:]    # get remaining data
     return dest_mac, src_mac, proto, data
+
+
+# function to parse the IP headers
+def ipv4_head(raw_data):
+    version_header_length = raw_data[0]
+    version = version_header_length >> 4
+    header_length = (version_header_length & 15) * 4
+    ttl, proto, src, target = struct.unpack('! 8x B B 2x 4s 4s', raw_data[:20])
+    data = raw_data[header_length:]
+    return version, header_length, ttl, proto, src, target, data
 
 
 # main
@@ -44,3 +54,8 @@ while True:
 
     print('\nEthernet Frame:')
     print('Destination: {}, Source: {}, Protocol: {}'.format(eth[0], eth[1], eth[2]))
+    if eth[2] == 8:
+        ipv4 = ipv4(eth[4])
+        print('\t - ' + 'IPv4 Packet:')
+        print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[1], ipv4[2], ipv4[3]))
+        print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[4], ipv4[5], ipv4[6]))
