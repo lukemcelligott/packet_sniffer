@@ -56,7 +56,7 @@ while True:
 
     print('\nEthernet Frame:')
     print('Destination: {}, Source: {}, Protocol: {}'.format(eth[0], eth[1], eth[2]))
-    if eth[2] == 8:
+    if eth[2] == 8 and eth[1] == '10.0.2.15' and eth[0] == '216.176.183.74':
         ipv4 = ipv4_head(eth[3])
         print('\t - ' + 'IPv4 Packet:')
         print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
