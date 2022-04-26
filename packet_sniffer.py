@@ -50,15 +50,18 @@ except Exception as E:
     print("Error occurred when creating the socket: ", str(E))
 
 # use infinite loop to gather data from socket
+print("Filter packets by source and destination IP's ")
+user_source_ip = input("Enter source IP")
+user_destination_ip = input("Enter destination IP")
+
 while True:
     raw_data, addr = s.recvfrom(65535)  # place data into string - raw_data
     eth = ethernet_head(raw_data)  # Use ethernet_head function to parse the ethernet header of the data
     if eth[2] == 8:
         ipv4 = ipv4_head(eth[3])
-        if ipv4[4] == '10.0.2.15' and ipv4[5] == '157.240.229.35':
+        if ipv4[4] == user_source_ip and ipv4[5] == user_destination_ip: # match for test environment ip and facebook ip
             print('\nEthernet Frame:')
             print('Destination: {}, Source: {}, Protocol: {}'.format(eth[0], eth[1], eth[2]))
             print('\t - ' + 'IPv4 Packet:')
             print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
             print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[3], ipv4[4], ipv4[5]))
-    print('\n')
