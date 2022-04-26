@@ -61,6 +61,6 @@ while True:
         print('\t - ' + 'IPv4 Packet:')
         print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
         print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[3], ipv4[4], ipv4[5]))
-        if ipv4[4] == '10.0.2.15' and ipv4[5] == '216.176.183.74':
+        if ipv4[4] == '10.0.2.15' and ipv4[5] == '157.240.229.35':
             print("yuhhhhhhhh")
     print('\n')
