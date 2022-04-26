@@ -38,7 +38,7 @@ def ipv4_head(raw_data):
         return '.'.join(map(str, addr))
     src = get_ip(src)
     target = get_ip(target)
-    return version, header_length, ttl, proto, src, target.hex(), data
+    return version, header_length, ttl, proto, src, target, data
 
 
 def tcp_head( raw_data):
@@ -51,8 +51,7 @@ def tcp_head( raw_data):
     flag_syn = (offset_reserved_flags & 2) >> 1
     flag_fin = offset_reserved_flags & 1
     data = raw_data[offset:]
-    return src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack,
-    flag_psh, flag_rst, flag_syn, flag_fin, data
+    return src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data
 
 
 # main
@@ -73,8 +72,8 @@ while True:
     if eth[2] == 8:
         ipv4 = ipv4_head(eth[3])
         print('\t - ' + 'IPv4 Packet:')
-        print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[1], ipv4[2], ipv4[3]))
-        print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[4], ipv4[5], ipv4[6]))
+        print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
+        print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[3], ipv4[4], ipv4[5]))
         if ipv4[4] == 6:
             tcp = tcp_head(ipv4[7])
             print('TCP Segment:')
