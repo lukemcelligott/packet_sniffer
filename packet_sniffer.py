@@ -41,19 +41,6 @@ def ipv4_head(raw_data):
     return version, header_length, ttl, proto, src, target, data
 
 
-def tcp_head( raw_data):
-    (src_port, dest_port, sequence, acknowledgment, offset_reserved_flags) = struct.unpack('! H H L L H', raw_data[:14])
-    offset = (offset_reserved_flags >> 12) * 4
-    flag_urg = (offset_reserved_flags & 32) >> 5
-    flag_ack = (offset_reserved_flags & 16) >> 4
-    flag_psh = (offset_reserved_flags & 8) >> 3
-    flag_rst = (offset_reserved_flags & 4) >> 2
-    flag_syn = (offset_reserved_flags & 2) >> 1
-    flag_fin = offset_reserved_flags & 1
-    data = raw_data[offset:]
-    return src_port, dest_port, sequence, acknowledgment, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data
-
-
 # main
 try:
     # create INET Raw socket. Parameter: (Family:AF_Packet, Type:RAW, Protocol:ntohs)
@@ -74,26 +61,4 @@ while True:
         print('\t - ' + 'IPv4 Packet:')
         print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[0], ipv4[1], ipv4[2]))
         print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[3], ipv4[4], ipv4[5]))
-        if ipv4[4] == 6:
-            tcp = tcp_head(ipv4[7])
-            print('TCP Segment:')
-            print('Source Port: {}, Destination Port: {}'.format(tcp[0], tcp[1]))
-            print('Sequence: {}, Acknowledgment: {}'.format(tcp[2], tcp[3]))
-            print('Flags:')
-            print('URG: {}, ACK: {}, PSH:{}'.format(tcp[4], tcp[5], tcp[6]))
-            print('RST: {}, SYN: {}, FIN:{}'.format(tcp[7], tcp[8], tcp[9]))
-            if len(tcp[10]) > 0:
-                # HTTP
-                if tcp[0] == 80 or tcp[1] == 80:
-                    print('HTTP Data:')
-                try:
-                    http = HTTP(tcp[10])
-                    http_info = str(http[10]).split('\n')
-                    for line in http_info:
-                        print(str(line))
-                except:
-                    print(tcp[10])
-                else:
-                    print('TCP Data:')
-                    print(tcp[10])
     print('\n')
