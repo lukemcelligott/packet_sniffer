@@ -12,7 +12,6 @@ Must run in Linux environment to use raw socket
 
 import socket
 import struct
-import sys
 from email.policy import HTTP
 
 # function to parse the Ethernet Header. Returns destination MAC, source MAC, protocol, and data.
@@ -59,10 +58,10 @@ def tcp_head( raw_data):
 # main
 try:
     # create INET Raw socket. Parameter: (Family:INET, Type:RAW, Protocol:TCP)
-    s = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_TCP)
+    s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
 
 except Exception as E:
-    print("Error occurred when creating the socket: 5", str(E))
+    print("Error occurred when creating the socket: ", str(E))
 
 # use infinite loop to gather data from socket
 while True:
