@@ -57,7 +57,7 @@ def tcp_head( raw_data):
 
 # main
 try:
-    # create INET Raw socket. Parameter: (Family:INET, Type:RAW, Protocol:TCP)
+    # create INET Raw socket. Parameter: (Family:AF_Packet, Type:RAW, Protocol:ntohs)
     s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
 
 except Exception as E:
@@ -72,7 +72,7 @@ while True:
     print('Destination: {}, Source: {}, Protocol: {}'.format(eth[0], eth[1], eth[2]))
     print(eth[3])
     if eth[2] == 8:
-        ipv4 = ipv4(eth[4])
+        ipv4 = ipv4_head(eth[4])
         print('\t - ' + 'IPv4 Packet:')
         print('\t\t - ' + 'Version: {}, Header Length: {}, TTL: {}, '.format(ipv4[1], ipv4[2], ipv4[3]))
         print('\t\t - ' + 'Protocol: {}, Source: {}, Target: {}'.format(ipv4[4], ipv4[5], ipv4[6]))
