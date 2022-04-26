@@ -38,7 +38,7 @@ def ipv4_head(raw_data):
         return '.'.join(map(str, addr))
     src = get_ip(src)
     target = get_ip(target)
-    return version, header_length, ttl, proto, src, target, data
+    return version, header_length, ttl, proto, src, target.hex(), data
 
 
 def tcp_head( raw_data):
