@@ -8,15 +8,11 @@ Must run in Linux environment to use raw socket
 
 """
 
-# TODO
-
 import socket
 import struct
-from email.policy import HTTP
+
 
 # function to parse the Ethernet Header. Returns destination MAC, source MAC, protocol, and data.
-
-
 def ethernet_head(raw_data):
     # use .unpack to get 6 byte structures
     destination, source, prototype = struct.unpack('! 6s 6s H', raw_data[:14])  # format gathered is MAC, MAC, 2char
@@ -50,10 +46,12 @@ except Exception as E:
     print("Error occurred when creating the socket: ", str(E))
 
 # use infinite loop to gather data from socket
-print("Filter packets by source and destination IP's ")
-user_source_ip = input("Enter source IP")
-user_destination_ip = input("Enter destination IP")
-
+print("PACKET SNIFFER")
+print("Options: \n1. Receive all packets\n2. Filter by source IP\n"
+      "3. Filter by destination IP\n4. Filter by source and Destination IP's")
+user_source_ip = input("Enter source IP: ")
+user_destination_ip = input("Enter destination IP: ")
+print("sniffing packets...")
 while True:
     raw_data, addr = s.recvfrom(65535)  # place data into string - raw_data
     eth = ethernet_head(raw_data)  # Use ethernet_head function to parse the ethernet header of the data
