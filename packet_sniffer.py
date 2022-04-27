@@ -98,5 +98,5 @@ while True:
         elif user_select == '3' and ipv4_dest == user_destination_ip:
             print_packet_info(eth, ipv4)
         # else, print all packets
-        elif user_select == '4':
+        elif user_select == '1':
             print_packet_info(eth, ipv4)
