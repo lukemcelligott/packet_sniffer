@@ -5,7 +5,6 @@ Reference Source: https://www.binarytides.com/python-packet-sniffer-code-linux/
 
 Packet Sniffer for analyzing network traffic packets
 Must run in Linux environment to use raw socket
-
 """
 
 import socket
@@ -91,11 +90,11 @@ while True:
         # match for user input (src and dest)
         if user_select == '4' and ipv4_source == user_source_ip and ipv4_dest == user_destination_ip:
             print_packet_info(eth, ipv4)
-        # match for user input (src)
-        elif user_select == '2' and ipv4_source == user_source_ip:
-            print_packet_info(eth, ipv4)
         # match for user input (dest)
         elif user_select == '3' and ipv4_dest == user_destination_ip:
+            print_packet_info(eth, ipv4)
+        # match for user input (src)
+        elif user_select == '2' and ipv4_source == user_source_ip:
             print_packet_info(eth, ipv4)
         # else, print all packets
         elif user_select == '1':
