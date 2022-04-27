@@ -3,6 +3,8 @@ Authors: Douglas Maxwell and Luke McElligott
 Reference Source: https://www.binarytides.com/python-packet-sniffer-code-linux/
                   https://www.uv.mx/personal/angelperez/files/2018/10/sniffers_texto.pdf
 
+Project Repository: https://github.com/lukemcelligott/packet_sniffer
+
 Packet Sniffer for analyzing network traffic packets
 Must run in Linux environment to use raw socket
 """
