@@ -7,6 +7,11 @@ Project Repository: https://github.com/lukemcelligott/packet_sniffer
 
 Packet Sniffer for analyzing network traffic packets
 Must run in Linux environment to use raw socket
+
+Developed packet sniffing application in Python. This program uses the socket library in order to communciate with
+the network. This program strengthened our skills in Python and networking as much research was necessary in order
+to complete this project. Test environment was an Ubuntu virtual machine.
+
 """
 
 import socket
